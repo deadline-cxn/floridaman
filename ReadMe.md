@@ -4,6 +4,7 @@ Florida Man
 Live the life of adventure. Play your favorite Flordia Man adventures as seen in the internet. You want to jump into the crocodile pit? Sure, go for it. You want to cook some meth and then ask a cop if it is okay? Nothing is off limits for Florida Man.
 
 This is the Commodore 64 version. Maybe more platforms will come in the future.
+Last update: April 7, 2019
 
 Developer Tools
 ===============
