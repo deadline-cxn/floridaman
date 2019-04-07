@@ -28,7 +28,6 @@ Instructions for getting the source code to compile.
 
 
             -showmem
-            -symbolfile
             -execute "X:\Your\Path\To\WinVICE-3.0-x64\x64.exe"
 
 
@@ -40,6 +39,8 @@ Optional tools:
 - Sprite Pad v1.8.1: https://csdb.dk/release/?id=100657 Homepage: http://www.subchristsoftware.com/spritepad.htm Note: Export as PRG file, the location doesn't matter as KickAss reassigns the start memory.
 - VChar64 v0.2.4: https://csdb.dk/release/?id=154949 Note: Export as ASM. In order to get this file to work with KickAss you must edit the file it creates and change all of the ; (for ASM comments) to // (for KickAss comments) You may also wish to change the file extension from .s to .asm (not sure if that matters or not).
 - droiD64 v0.15b: https://csdb.dk/release/?id=172082 This will allow you to construct .D64 images.
+- VSCode: The best code editor EVER made. Period. And it is free. https://code.visualstudio.com/
+- VSCode Kick Assembler (C64) v0.0.2 Plugin: Just search for it in the extension store in VSCode and install it. You'll need to configure one setting for the path to Kick Assembler jar file, and optionally configure a Keyboard Shortcut to the Kick Assembler: Build function that it adds to the VSCode Command Palette, or just invoke the Kick Assembler: Build directly into the Command Palette.
     
 More to come, standby.
 
