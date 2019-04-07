@@ -9,11 +9,13 @@ Developer Tools
 ===============
 Instructions for getting the source code to compile.
 
-- Kick Assembler v5.5: http://www.theweb.dk/KickAssembler This requires java in order to work
-    You can configure KickAssembler to automatically start Vice after a compile, and it will start the program immediately. This is helpful.
+- Kick Assembler v5.5: http://www.theweb.dk/KickAssembler This requires java in order to work.
 
-        - First, locate the file: KickAss.cfg in the KickAss folder
-        - Edit the KickAss.cfg and make sure it looks like this:
+    You can configure KickAssembler to automatically start Vice after a compile, and it will start the program immediately.
+
+    First, locate the file: KickAss.cfg in the KickAss folder
+
+    Edit the KickAss.cfg and make sure it looks like this:
 
 
             -showmem
@@ -21,19 +23,15 @@ Instructions for getting the source code to compile.
             -execute "X:\Your\Path\To\WinVICE-3.0-x64\x64.exe"
 
 
-        - That's it! Now it will load the compiled program into vice and run it once it is finished compiling.
+    That's it! Now it will load the compiled program into vice and run it once it is finished compiling.
 
 
 Optional tools:
 - Vice v3.0+: http://vice-emu.sourceforge.net/ 
-- Sprite Pad v1.8.1: https://csdb.dk/release/?id=100657 Homepage: http://www.subchristsoftware.com/spritepad.htm
-    Note: Export as PRG file, the location doesn't matter as KickAss reassigns the start memory
-- VChar64 v0.2.4: https://csdb.dk/release/?id=154949
-    Note: Export as ASM. In order to get this file to work with KickAss you must edit the file it creates and 
-          change all of the ; (for ASM comments) to // (for KickAss comments)
-          You may also wish to change the file extension from .s to .asm (not sure if that matters or not)
-- droiD64 v0.15b: https://csdb.dk/release/?id=172082
-    This will allow you to construct .D64 images
+- Sprite Pad v1.8.1: https://csdb.dk/release/?id=100657 Homepage: http://www.subchristsoftware.com/spritepad.htm Note: Export as PRG file, the location doesn't matter as KickAss reassigns the start memory.
+- VChar64 v0.2.4: https://csdb.dk/release/?id=154949 Note: Export as ASM. In order to get this file to work with KickAss you must edit the file it creates and change all of the ; (for ASM comments) to // (for KickAss comments) You may also wish to change the file extension from .s to .asm (not sure if that matters or not).
+- droiD64 v0.15b: https://csdb.dk/release/?id=172082 This will allow you to construct .D64 images.
     
-More to come, standby
+More to come, standby.
+
 Seth aka Deadline
