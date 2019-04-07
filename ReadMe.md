@@ -9,6 +9,14 @@ Developer Tools
 ===============
 Instructions for getting the source code to compile.
 
+- Firstly, you will also need to have the Deadline C64 Assembly Library repo installed locally. The Directory structure should look like this:
+
+        -ParentFolderDoesNotMatterWhereItIsLocated/
+            - DDL/
+                This is where the Deadline C64 Assembly Library repo should reside
+            - floridaman/
+                This is where the floridaman repo should reside
+
 - Kick Assembler v5.5: http://www.theweb.dk/KickAssembler This requires java in order to work.
 
     You can configure KickAssembler to automatically start Vice after a compile, and it will start the program immediately.
