@@ -6,7 +6,7 @@ EACH LEVEL HAS A DIFFERENT GOAL
 THE OBJECT IS TO COMPLETE THE LEVEL AND THEN GET CAUGHT BY POLICE AND HAVE A CRAZY
 HEADLINE. THE MORE POINTS YOU SCORE DURING THE LEVEL INCREASES THE YEARS IN PRISON
 YOU GET. */
-#import "../DDL/Deadline_Library.asm"
+#import "../ddl_asm_c64/Deadline_Library.asm"
 #import "floridamanfont-charset.asm"
 #import "floridamanvars.asm"
 .pc = $A1C0 "floridamansprites"

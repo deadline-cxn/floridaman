@@ -9,10 +9,10 @@ Developer Tools
 ===============
 Instructions for getting the source code to compile.
 
-- Firstly, you will also need to have the Deadline C64 Assembly Library repo installed locally. The Directory structure should look like this:
+- Firstly, you will also need to have the https://github.com/sethcoder/ddl_asm_c64 repo  installed locally. The Directory structure should look like this:
 
         -ParentFolderDoesNotMatterWhereItIsLocated/
-            - DDL/
+            - ddl_asm_c64/
                 This is where the Deadline C64 Assembly Library repo should reside
             - floridaman/
                 This is where the floridaman repo should reside
