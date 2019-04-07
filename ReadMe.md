@@ -11,12 +11,15 @@ Instructions for getting the source code to compile.
 
 - Kick Assembler v5.5: http://www.theweb.dk/KickAssembler This requires java in order to work
     You can configure KickAssembler to automatically start Vice after a compile, and it will start the program immediately. This is helpful.
+
         - First, locate the file: KickAss.cfg in the KickAss folder
         - Edit the KickAss.cfg and make sure it looks like this:
+
 
             -showmem
             -symbolfile
             -execute "X:\Your\Path\To\WinVICE-3.0-x64\x64.exe"
+
 
         - That's it! Now it will load the compiled program into vice and run it once it is finished compiling.
 
@@ -33,6 +36,4 @@ Optional tools:
     This will allow you to construct .D64 images
     
 More to come, standby
-  /\
--Deadline-
-     \/
+Seth aka Deadline
