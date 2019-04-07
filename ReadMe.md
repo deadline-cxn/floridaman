@@ -3,7 +3,8 @@ Florida Man
 
 Live the life of adventure. Play your favorite Florida Man adventures as seen in the internet. You want to jump into the crocodile pit? Sure, go for it. You want to break IN to jail to hang with your friends? Nothing is off limits for Florida Man.
 
-![alt text](https://github.com/sethcoder/floridaman/blob/master/floridaman_title.png)
+![Screenshot](floridaman_title.png)
+![Screenshot](floridaman_screenshot2.png)
 
 This is the Commodore 64 version. Maybe more platforms will come in the future.
 Last update: April 7, 2019
