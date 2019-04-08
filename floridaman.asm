@@ -203,7 +203,10 @@ load_level_press_fire: .text "press fire to start"; .byte 0
 // Subroutine: Move Player
 //////////////////////////////////////////////////////////////////////////////////////
 sub_move_player:
-	// lda #$ff; cmp VIC_RASTER_COUNTER; beq ok_move; rts
+	lda #$01;
+	cmp VIC_RASTER_COUNTER;
+	bcs ok_move;
+	rts
 ok_move:
 	lda var_joy_2_x
 	beq move_y
