@@ -2,11 +2,9 @@
 // Florida Man vars and constants
 //////////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
-.const C_ROUTINE_MEM     = $C000
-.const C_LEVEL_ROUTINE   = $5000 // Load level into this area
-.const C_STARTING_LIVES  = 4
-.const C_STARTING_LEVEL  = 0
-.const C_MAX_LEVELS      = 14
+.const C_STARTING_LIVES  = $04
+.const C_STARTING_LEVEL  = $01
+.const C_MAX_LEVELS      = $0E
 //////////////////////////////////////////////////////////////////////////////////////
 // Vars
 // $0313 Unused (1 byte)
@@ -27,10 +25,10 @@
 .var var_player_bullet_x = $02AF
 .var var_player_bullet_y = $02B0
 .var var_sprite_color_reg= $02B1
-
+.var var_filename        = $02B2 // 16 bytes for filename
 
 //////////////////////////////////////////////////////////////////////////////////////
-
+// Experimenting with Kick Assembler stuff
 
 .struct Entity {
     which_sprite,
@@ -53,22 +51,25 @@
 // }
 
 .var level_list = List(20)
-.eval level_list.set(0, "YOU STOLE MY FART")     // GET STABBED BY YOUR GIRLFRIEND AFTER FARTING ON HER
-.eval level_list.set(1, "SQUIRREL OF MY DREAMS") // STEAL A CAMERA AND TAKE A SELFIE WITH A SQUIRREL
-.eval level_list.set(2, "GATOR DONE")            // BONUS ROUND: BREAK INTO GATOR FARM
-.eval level_list.set(3, "BREAK IN")              // BREAK INTO JAIL, THEN HANG WITH YOUR FRIENDS
-.eval level_list.set(4, "ANGRY BIRDS")           // STEAL YOUR NEIGHBOR'S PEACOCK BUT DON'T UPSET THE OTHER BIRDS
-.eval level_list.set(5, "SWAN FU")               // BONUS ROUND: PRACTICE KARATE ON SWANS AT THE LOCAL PARK
-.eval level_list.set(6, "CHICKEN TONIGHT")       // COLLECT INGREDIENTS, COOK FRIED CHICKEN, THEN ASSAULT YOUR GIRLFRIEND WITH IT
-.eval level_list.set(7, "MOP HEAD HORROR")       // STEAL A MOP, WEAR IT ON YOUR HEAD AND DEMAND EGGS
-.eval level_list.set(8, "SAFARI")                // BONUS ROUND: STEAL 11 DIFFERENT ANIMALS FROM THE ZOO
-.eval level_list.set(9, "HOT DATE")              // STEAL A WALMART MOBILITY SCOOTER, THEN TAKE YOUR DATE TO A SPORTS BAR
-.eval level_list.set(11,"BUCKET LIST")           // GET BITTEN BY A SHARK, SNAKE AND ALLIGATOR, PUNCHED BY A MONKEY (TWICE), STRUCK BY LIGHTNING
-.eval level_list.set(10,"TUTU FRUITY")           // BONUS ROUND: BREAK INTO THE FARMER'S MARKET TO CONSUME FRUIT WHILE WEARING A TUTU
-.eval level_list.set(12,"METH BUSTERS")          // STEAL CHEMICALS, COOK SOME METH AND THEN ASK A COP IF IT IS GOOD QUALITY
-.eval level_list.set(13,"ALPHA MALE")            // FIND AND WEAR A DOG COSTUME, THEN BITE DOGS TO ESTABLISH DOMINANCE
-.eval level_list.set(14,"AYY LMAO")              // BONUS ROUND: ATTEMPT TO HANG WITH THE ALIENS
+.eval level_list.set(1, "squirrel of my dreams") // STEAL A CAMERA AND TAKE A SELFIE WITH A SQUIRREL
+.eval level_list.set(2, "alpha male")            // FIND AND WEAR A DOG COSTUME, THEN BITE DOGS TO ESTABLISH DOMINANCE
+.eval level_list.set(3, "gator done")            // BONUS ROUND: BREAK INTO GATOR FARM
+.eval level_list.set(4, "break in")              // BREAK INTO JAIL, THEN HANG WITH YOUR FRIENDS
+.eval level_list.set(5, "angry birds")           // STEAL YOUR NEIGHBOR'S PEACOCK BUT DON'T UPSET THE OTHER BIRDS
+.eval level_list.set(6, "swan fu")               // BONUS ROUND: PRACTICE KARATE ON SWANS AT THE LOCAL PARK
+.eval level_list.set(7, "chicken tonight")       // COLLECT INGREDIENTS, COOK FRIED CHICKEN, THEN ASSAULT YOUR GIRLFRIEND WITH IT
+.eval level_list.set(8, "mop head horror")       // STEAL A MOP, WEAR IT ON YOUR HEAD AND DEMAND EGGS
+.eval level_list.set(9, "safari")                // BONUS ROUND: STEAL 11 DIFFERENT ANIMALS FROM THE ZOO
+.eval level_list.set(10,"hot date")              // STEAL A WALMART MOBILITY SCOOTER, THEN TAKE YOUR DATE TO A SPORTS BAR
+.eval level_list.set(11,"bucket list")           // GET BITTEN BY A SHARK, SNAKE AND ALLIGATOR, PUNCHED BY A MONKEY (TWICE), STRUCK BY LIGHTNING
+.eval level_list.set(12,"tutu fruity")           // BONUS ROUND: BREAK INTO THE FARMER'S MARKET TO CONSUME FRUIT WHILE WEARING A TUTU
+.eval level_list.set(13,"meth busters")          // STEAL CHEMICALS, COOK SOME METH AND THEN ASK A COP IF IT IS GOOD QUALITY
+.eval level_list.set(14,"you stole my fart")     // GET STABBED BY YOUR GIRLFRIEND AFTER FARTING ON HER
+.eval level_list.set(15,"ayy lmao")              // BONUS ROUND: ATTEMPT TO HANG WITH THE ALIENS
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+// Some Florida Man headlines
 // Florida Man calls 911 80 times to demand kool-aid, hamburgers and weed
 // Florida Man throws an alligator into a wendy's drive thru window
 // Dog shoots Florida Man in the leg with a 9mm handgun
@@ -78,8 +79,7 @@
 // Florida man shoots volunteer in the butt because he doesn't like sea turtles
 // Florida man beats ATM, says it gave too much cash
 
-
-
+//////////////////////////////////////////////////////////////////////////////////////
 // SPRITE DEFS
 .const SPRITE_FLORIDA_MAN_STANDING      = $80
 .const SPRITE_FLORIDA_MAN_WALK_RIGHT_1  = $81
@@ -139,7 +139,7 @@
 .const SPRITE_BIRD_FLY_2                = $B7
 .const SPRITE_BIRD_FLY_3                = $B8
 
-
+//////////////////////////////////////////////////////////////////////////////////////
 // CHARS
 .const CHAR_LIVES_INDICATOR = 28
 .const CHAR_HEART           = 29
@@ -149,6 +149,7 @@
 .const CHAR_UP_ARROW        = 34
 .const CHAR_DOWN_ARROW      = 35
 
+//////////////////////////////////////////////////////////////////////////////////////
 // TILES
 .const TILE_ATM             = 36
 .const TILE_METH_LAB        = 40

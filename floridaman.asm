@@ -1,29 +1,48 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Florida Man by Seth Parson aka Deadline
 //////////////////////////////////////////////////////////////////////////////////////
-/* NOTES: EACH LEVEL HAS A DIFFERENT GOAL
-THE OBJECT IS TO COMPLETE THE LEVEL AND THEN GET CAUGHT BY POLICE AND HAVE A CRAZY
-HEADLINE. THE MORE POINTS YOU SCORE DURING THE LEVEL INCREASES THE YEARS IN PRISON
-YOU GET. */
+//
+// NOTES:
+//	EACH LEVEL HAS A DIFFERENT GOAL
+//		THE OBJECT IS TO COMPLETE THE LEVEL AND THEN GET CAUGHT BY POLICE AND
+//		HAVE A CRAZY HEADLINE. THE MORE POINTS YOU SCORE DURING THE LEVEL
+//		INCREASES THE YEARS IN PRISON YOU GET.
+//
+//////////////////////////////////////////////////////////////////////////////////////
+.const C_ROUTINE_MEM     = $080E
+.const C_LEVEL_ROUTINE   = $5000 // Load level into this area
 #import "../ddl_asm_c64/Deadline_Library.asm"
 #import "floridamanfont-charset.asm"
-#import "floridamanvars.asm"
-*=$A1C0 "floridamansprites"
+#import "floridaman_vars.asm"
+.var mem_deadline_sprites = $A000
+*=mem_deadline_sprites "DeadlineSprites"
+#import "../ddl_asm_c64/Deadline_Sprites_Data.asm"
+.var mem_floridaman_sprites = $A1C0
+*=mem_floridaman_sprites "floridamansprites";
 .import binary "floridamansprites2000.2.prg"
-.file [name="prg_files/floridaman.prg", segments="Default"]
-.file [name="prg_files/0.prg", segments="Level1"]
-.disk [filename="floridaman.d64", name="FLORIDAMAN", id="2019!" ] {
-	[name="FLORIDAMAN", type="prg",  segments="Default"],
-	[name="----------------", type="rel"],
-	[name="0", type="prg", segments="Level1"],
-}
-
+*=$CE00 "Data Tables"
+#import "floridaman_data.asm"
 //////////////////////////////////////////////////////////////////////////////////////
+// File stuff
+.file [name="prg_files/floridaman.prg", segments="Main,DDL,DefaultLevel"]
+.file [name="prg_files/0.prg", segments="DefaultLevel"]
+.file [name="prg_files/1.prg", segments="Level1"]
+.file [name="prg_files/2.prg", segments="Level2"]
+.disk [filename="floridaman.d64", name="FLORIDAMAN", id="2019!" ] {
+	[name="FLORIDAMAN", type="prg",  segments="Main,DDL,DefaultLevel"],
+	[name="----------------", type="rel"],
+	[name="0", type="prg", segments="DefaultLevel"],
+	[name="1", type="prg", segments="Level1"],
+	[name="2", type="prg", segments="Level2"],
+}
+//////////////////////////////////////////////////////////////////////////////////////
+.segment Main [allowOverlap]
 *=$0801 "BASIC"
 BasicUpstart(C_ROUTINE_MEM)
-*=C_ROUTINE_MEM "ROUTINE"
+*=C_ROUTINE_MEM "Main ROUTINE"
 program_start:
 	sei
+	DDL_Load_StringName("0",$50,$00)
   	jsr sub_initialize
   	jsr sub_title_screen
 	jsr sub_initialize_vars
@@ -51,23 +70,13 @@ sub_initialize_vars:
  	lda #C_STARTING_LIVES; sta var_lives // starting lives
 	lda #C_STARTING_LEVEL; sta var_level // starting level (add +1 for displaying on screen)
 
+	// This routines will be set up inside the level routine that loads
 	// Setup player location on screen
 	lda #$80; sta var_player_x
 	lda #$80; sta var_player_y
 
-	// Setup game sprites
-    lda #$01; sta SPRITE_ENABLE
-	lda #$00; sta SPRITE_MULTICOLOR
-    lda #$00; sta SPRITE_MSB_X
-	lda BLUE; sta SPRITE_0_COLOR
-	lda #$80; sta SPRITE_0_POINTER
-//    lda #$c9; sta SPRITE_1_POINTER
-//              sta SPRITE_7_POINTER
-//    lda #$ca; sta SPRITE_2_POINTER
-//    lda #$cb; sta SPRITE_3_POINTER
-//    lda #$cc; sta SPRITE_4_POINTER
-//    lda #$cd; sta SPRITE_5_POINTER
-//    lda #$ce; sta SPRITE_6_POINTER
+	// Turn off game sprites
+    lda #$00; sta SPRITE_ENABLE
 	rts
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -78,27 +87,21 @@ sub_title_screen:
     jsr KERNAL_CHROUT
 	jsr sub_copy_floridaman_font
 	jsr sub_copy_deadline_sprites
-	ldx #$00
-printtitlemsg:
-	lda titlemsg,x
-	beq endtitlemsg
-	jsr KERNAL_CHROUT
-	inx
-	jmp printtitlemsg
-titlemsg:
-.text "qqqqqqqe              PRESENTS:mqqqqqq         PRESS FIRE JOYPORT 2"; .byte 0
-endtitlemsg:
+	
+	PrintAtColor(15,7,titlemsg1,WHITE)
+	PrintAtColor(9,15,titlemsg2,YELLOW)
+
 	// PUT THE FLORIDA MAN TITLE ON THE SCREEN
 	ldx #$00
 putfloridamantitle:
-	lda titlefloridaman,x; 		   sta SCREEN_MEMORY+12+360,x
-	lda titlefloridamancolor,x;    sta COLOR_MEMORY+12+360,x
-	lda titlefloridaman+14,x;	   sta SCREEN_MEMORY+12+400,x
-	lda titlefloridamancolor+14,x; sta COLOR_MEMORY+12+400,x
-	lda titlefloridaman+28,x;	   sta SCREEN_MEMORY+12+440,x
-	lda titlefloridamancolor+28,x; sta COLOR_MEMORY+12+440,x
-	lda titlefloridaman+42,x;  	   sta SCREEN_MEMORY+12+480,x
-	lda titlefloridamancolor+42,x; sta COLOR_MEMORY+12+480,x
+	lda data_titlefloridaman,x;			sta SCREEN_MEMORY+12+360,x
+	lda data_titlefloridamancolor,x;	sta COLOR_MEMORY+12+360,x
+	lda data_titlefloridaman+14,x;		sta SCREEN_MEMORY+12+400,x
+	lda data_titlefloridamancolor+14,x;	sta COLOR_MEMORY+12+400,x
+	lda data_titlefloridaman+28,x;		sta SCREEN_MEMORY+12+440,x
+	lda data_titlefloridamancolor+28,x; sta COLOR_MEMORY+12+440,x
+	lda data_titlefloridaman+42,x;		sta SCREEN_MEMORY+12+480,x
+	lda data_titlefloridamancolor+42,x; sta COLOR_MEMORY+12+480,x
 	inx
 	cpx #14
 	bne putfloridamantitle
@@ -151,34 +154,51 @@ title_loop:
 	beq title_loop
 	rts
 
+titlemsg1: .text "presents"; .byte 0
+titlemsg2: .text "press fire joyport 2"; .byte 0
+
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: GAME ON
 //////////////////////////////////////////////////////////////////////////////////////
 GAME_ON:
     lda #$93; jsr KERNAL_CHROUT
 	jsr sub_load_level
-	jsr sub_initialize_level
 	jmp C_LEVEL_ROUTINE
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Load Level
 //////////////////////////////////////////////////////////////////////////////////////
 sub_load_level:
-	// TODO: SHOW LOAD SCREEN, INDICATE WHICH LEVEL, and the title of the level / goals
-
-	// TODO: LOAD LEVEL FROM DISK
-
-	// TODO: LOAD LEVEL GRAPHICS FROM DISK
-
+	lda #$93; jsr KERNAL_CHROUT
+	PrintAtColor(5,5,load_level_message,WHITE)
+// SET FILENAME
+	ldx #$00
+	lda #$00
+set_filename_loop1:
+	sta var_filename,x
+	inx
+	cpx #$0F
+	bne set_filename_loop1
+	lda var_level
+	clc
+	adc #$30
+	sta var_filename
+	PrintAtColor(19,5,var_filename,RED)
+	PrintAtColor(5,7,load_level_filename,WHITE)
+	PrintAtColor(14,7,var_filename,RED)
+	DDL_Load_MemName(var_filename,$50,$00)
+	PrintAtRainbow(5,9,level_message) // show the loaded level message
+	// READ JOYSTICK 2, CHECK FOR FIRE BUTTON PRESS
+	PrintAtColor(5,11,load_level_press_fire,YELLOW)
+load_level_temp_check_fire:
+	jsr sub_read_joystick_2
+	lda var_joy_2_fire
+	beq load_level_temp_check_fire
 	rts
+load_level_message:   .text "loading level:"; .byte 0
+load_level_filename:  .text "filename:"; .byte 0
+load_level_press_fire: .text "press fire to start"; .byte 0
 
-//////////////////////////////////////////////////////////////////////////////////////
-// Subroutine: Initialize Level
-//////////////////////////////////////////////////////////////////////////////////////
-sub_initialize_level:
-
-	rts
-	
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Move Player
 //////////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +226,7 @@ up:
 	dec var_player_y
 check_boundry:
 	lda var_player_x
-	cmp #$fd
+	cmp #$ff
 	bne ckbnx2
 	dec var_player_x
 	jmp ckbny
@@ -216,7 +236,7 @@ ckbnx2:
 	inc var_player_x
 ckbny:
 	lda var_player_y
-	cmp #$b0
+	cmp #$d0
 	bne ckbny2
 	dec var_player_y
 	jmp xitckbn
@@ -240,31 +260,23 @@ sub_update_hud:
 	beq do_hud
 	rts
 do_hud:
+	PrintAtColor(30,0,SCREEN_LIVES_STRING,WHITE)
+	PrintAtColor(37,0,var_lives,WHITE)
+
 	// DEBUG STUFF
-	lda var_player_x
-	sta 1104
-	lda var_player_y
-	sta 1105
-	lda var_joy_2_fire
-	sta 1106
+	PrintDecAtColor(30,2,var_player_x,WHITE)
+	PrintDecAtColor(30,3,var_player_y,WHITE)
+	PrintDecAtColor(30,4,var_joy_2_fire,WHITE)
+	
+	// lda var_player_x; sta 1104
+	// lda var_player_y; sta 1105
+	// lda var_joy_2_fire; sta 1106
 
-	lda #$00
-	sta CURSOR_X_POS
-	sta CURSOR_Y_POS
 
-    ldx #$00
-print_screen_lives:
-	lda SCREEN_LIVES_STRING,x
-	beq print_screen_lives_2
-    jsr KERNAL_CHROUT
-    inx
-    jmp print_screen_lives
-print_screen_lives_2:
-	lda var_lives
-    clc
-    adc #$30
-    jsr KERNAL_CHROUT
+
     rts	
+
+SCREEN_LIVES_STRING: .text "lives:"; .byte 0
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Copy Florida Man FONT into VIC mem
@@ -289,14 +301,14 @@ copy_fmf_loopz1:
 // Subroutine: Copy Deadline Sprites into VIC mem
 //////////////////////////////////////////////////////////////////////////////////////
 sub_copy_deadline_sprites:
-	// copy the deadline sprites to the showing area from $A000 to $2000 (7x64 bytes)
+	// copy the deadline sprites
 	ldx #$00
 copyloopz1:
-	lda $A000,x; sta $2000,x
+	lda mem_deadline_sprites,x; sta $2000,x
 	inx
 	bne copyloopz1
 copyloopz2:
-	lda $A100,x; sta $2100,x
+	lda mem_deadline_sprites+$100,x; sta $2100,x
 	inx
 	cpx #$C1
 	bne copyloopz2
@@ -309,33 +321,32 @@ sub_copy_floridaman_sprites:
 	// copy the floridaman sprites to the showing area from $A1C0-$B7C1 to $2000 
 	ldx #$00
 copy_flm_loopz1:
-	lda $A1C0,x; sta $2000,x
-	lda $A2C0,x; sta $2100,x
-	lda $A3C0,x; sta $2200,x
-	lda $A4C0,x; sta $2300,x
-	lda $A5C0,x; sta $2400,x
-	lda $A6C0,x; sta $2500,x
-	lda $A7C0,x; sta $2600,x
-	lda $A8C0,x; sta $2700,x	
-	lda $A9C0,x; sta $2800,x
-	lda $AAC0,x; sta $2900,x
-	lda $ABC0,x; sta $2A00,x
-	lda $ACC0,x; sta $2B00,x
-	lda $ADC0,x; sta $2C00,x
-	lda $AEC0,x; sta $2D00,x
-	lda $AFC0,x; sta $2E00,x
-	lda $B0C0,x; sta $2F00,x
-	lda $B1C0,x; sta $3000,x
-	lda $B2C0,x; sta $3100,x
-	lda $B3C0,x; sta $3200,x
-	lda $B4C0,x; sta $3300,x
-	lda $B5C0,x; sta $3400,x
-	lda $B6C0,x; sta $3500,x
+	lda mem_floridaman_sprites,x; sta $2000,x
+	lda mem_floridaman_sprites+$100,x; sta $2100,x
+	lda mem_floridaman_sprites+$200,x; sta $2200,x
+	lda mem_floridaman_sprites+$300,x; sta $2300,x
+	lda mem_floridaman_sprites+$400,x; sta $2400,x
+	lda mem_floridaman_sprites+$500,x; sta $2500,x
+	lda mem_floridaman_sprites+$600,x; sta $2600,x
+	lda mem_floridaman_sprites+$700,x; sta $2700,x	
+	lda mem_floridaman_sprites+$800,x; sta $2800,x
+	lda mem_floridaman_sprites+$900,x; sta $2900,x
+	lda mem_floridaman_sprites+$A00,x; sta $2A00,x
+	lda mem_floridaman_sprites+$B00,x; sta $2B00,x
+	lda mem_floridaman_sprites+$C00,x; sta $2C00,x
+	lda mem_floridaman_sprites+$D00,x; sta $2D00,x
+	lda mem_floridaman_sprites+$E00,x; sta $2E00,x
+	lda mem_floridaman_sprites+$F00,x; sta $2F00,x
+	lda mem_floridaman_sprites+$1000,x; sta $3000,x
+	lda mem_floridaman_sprites+$1100,x; sta $3100,x
+	lda mem_floridaman_sprites+$1200,x; sta $3200,x
+	lda mem_floridaman_sprites+$1300,x; sta $3300,x
+	lda mem_floridaman_sprites+$1400,x; sta $3400,x
+	lda mem_floridaman_sprites+$1500,x; sta $3500,x
 	inx
 	bne copy_flm_loopz2
 	rts
 copy_flm_loopz2:
 	jmp copy_flm_loopz1
 
-#import "floridaman_data.asm"
 #import "floridaman_levels.asm"
