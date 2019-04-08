@@ -1,16 +1,23 @@
 //////////////////////////////////////////////////////////////////////////////////////
+// Florida Man vars and constants
+//////////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS
+.const C_ROUTINE_MEM     = $C000
+.const C_LEVEL_ROUTINE   = $5000 // Load level into this area
+.const C_STARTING_LIVES  = 4
+.const C_STARTING_LEVEL  = 0
+.const C_MAX_LEVELS      = 14
+//////////////////////////////////////////////////////////////////////////////////////
 // Vars
-.var var_routine_mem     = $C000
-
-// $02A7-$02FF (679-767) Unused (89 bytes).
 // $0313 Unused (1 byte)
 // $032E-$032F Unused (2 bytes)
-// $0334-$033B (820-827) Unused (8 bytes).
 // $03FC-$03FF (1020-1023) Unused (4 bytes).
+.var var_score      	 = $03FC // score takes up 4 bytes
 // $07E8-$07F7 (2024-2039) Unused (16 bytes).
 
+// $02A7-$02FF (679-767) Unused (89 bytes).
 .var var_lives      	 = $02A7
-
+.var var_level           = $02A8
 .var var_timer      	 = $02A9
 .var var_monsters   	 = $02AA
 .var var_scroll_p   	 = $02AB
@@ -21,14 +28,9 @@
 .var var_player_bullet_y = $02B0
 .var var_sprite_color_reg= $02B1
 
-.var var_joy_1_x    	 = $02B2
-.var var_joy_1_y    	 = $02B3
-.var var_joy_1_fire  	 = $02B4
-.var var_joy_2_x    	 = $02B5
-.var var_joy_2_y    	 = $02B6
-.var var_joy_2_fire  	 = $02B7
 
-.var var_score      	 = $02B8
+//////////////////////////////////////////////////////////////////////////////////////
+
 
 .struct Entity {
     which_sprite,
@@ -66,6 +68,16 @@
 .eval level_list.set(12,"METH BUSTERS")          // STEAL CHEMICALS, COOK SOME METH AND THEN ASK A COP IF IT IS GOOD QUALITY
 .eval level_list.set(13,"ALPHA MALE")            // FIND AND WEAR A DOG COSTUME, THEN BITE DOGS TO ESTABLISH DOMINANCE
 .eval level_list.set(14,"AYY LMAO")              // BONUS ROUND: ATTEMPT TO HANG WITH THE ALIENS
+
+// Florida Man calls 911 80 times to demand kool-aid, hamburgers and weed
+// Florida Man throws an alligator into a wendy's drive thru window
+// Dog shoots Florida Man in the leg with a 9mm handgun
+// Florida Man too fat for jail
+// Florida Man dances on polive vehicle to ward off vampires
+// Florida Man breaks into ex's home, poops on everything
+// Florida man shoots volunteer in the butt because he doesn't like sea turtles
+// Florida man beats ATM, says it gave too much cash
+
 
 
 // SPRITE DEFS
