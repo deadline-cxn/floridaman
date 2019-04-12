@@ -16,10 +16,10 @@
 #import "floridaman_vars.asm"
 .var mem_deadline_sprites = $A000
 *=mem_deadline_sprites "DeadlineSprites"
-#import "../ddl_asm_c64/Deadline_Sprites_Data.asm"
+#import "../ddl_asm_c64/CityXen_Sprites_Data.asm"
 .var mem_floridaman_sprites = $A1C0
 *=mem_floridaman_sprites "floridamansprites";
-.import binary "floridamansprites2000.2.prg"
+#import "floridaman_sprites.asm"
 *=$CE00 "Data Tables"
 #import "floridaman_data.asm"
 //////////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +74,10 @@ sub_initialize_vars:
 	// Setup player location on screen
 	lda #$80; sta var_player_x
 	lda #$80; sta var_player_y
+	lda #C_FM_X_MIN; sta var_fm_x_min
+	lda #C_FM_X_MAX; sta var_fm_x_max
+	lda #C_FM_Y_MIN; sta var_fm_y_min
+	lda #C_FM_Y_MAX; sta var_fm_y_max
 
 	// Turn off game sprites
     lda #$00; sta SPRITE_ENABLE
@@ -86,76 +90,245 @@ sub_title_screen:
     lda #$93
     jsr KERNAL_CHROUT
 	jsr sub_copy_floridaman_font
+	jsr sub_copy_floridaman_sprites
 	jsr sub_copy_deadline_sprites
 	
-	PrintAtColor(15,7,titlemsg1,WHITE)
-	PrintAtColor(9,15,titlemsg2,YELLOW)
+	PrintStrAtColor(15,7,"presents",WHITE)
+	PrintStrAtColor(9,15,"press fire joyport 2",YELLOW)
 
 	// PUT THE FLORIDA MAN TITLE ON THE SCREEN
 	ldx #$00
 putfloridamantitle:
-	lda data_titlefloridaman,x;			sta SCREEN_MEMORY+12+360,x
-	lda data_titlefloridamancolor,x;	sta COLOR_MEMORY+12+360,x
-	lda data_titlefloridaman+14,x;		sta SCREEN_MEMORY+12+400,x
-	lda data_titlefloridamancolor+14,x;	sta COLOR_MEMORY+12+400,x
-	lda data_titlefloridaman+28,x;		sta SCREEN_MEMORY+12+440,x
-	lda data_titlefloridamancolor+28,x; sta COLOR_MEMORY+12+440,x
-	lda data_titlefloridaman+42,x;		sta SCREEN_MEMORY+12+480,x
-	lda data_titlefloridamancolor+42,x; sta COLOR_MEMORY+12+480,x
+	lda data_titlefloridaman,x;			sta SCREEN_RAM+12+360,x
+	lda data_titlefloridamancolor,x;	sta COLOR_RAM+12+360,x
+	lda data_titlefloridaman+14,x;		sta SCREEN_RAM+12+400,x
+	lda data_titlefloridamancolor+14,x;	sta COLOR_RAM+12+400,x
+	lda data_titlefloridaman+28,x;		sta SCREEN_RAM+12+440,x
+	lda data_titlefloridamancolor+28,x; sta COLOR_RAM+12+440,x
+	lda data_titlefloridaman+42,x;		sta SCREEN_RAM+12+480,x
+	lda data_titlefloridamancolor+42,x; sta COLOR_RAM+12+480,x
 	inx
 	cpx #14
 	bne putfloridamantitle
-	// PUT THE DEADLINE SPRITES ON THE SCREEN
-    lda #$FF; 		sta SPRITE_ENABLE; sta SPRITE_MULTICOLOR
-    lda #DARK_GRAY; sta SPRITE_MULTICOLOR_0
-    lda #GRAY; 		sta SPRITE_MULTICOLOR_1
+	// PUT THE CITYXEN SPRITES ON THE SCREEN
+    lda #$FF
+	sta SPRITE_ENABLE
+	lda #$7f
+	sta SPRITE_MULTICOLOR
+    lda #LIGHT_GRAY; 		sta SPRITE_MULTICOLOR_0
+    lda #GRAY; sta SPRITE_MULTICOLOR_1
     lda #$00;		sta SPRITE_MSB_X
+
+    lda #DARK_GRAY
+    sta SPRITE_0_COLOR
+    sta SPRITE_1_COLOR
+    sta SPRITE_2_COLOR
+    sta SPRITE_3_COLOR
+    sta SPRITE_4_COLOR
+    sta SPRITE_5_COLOR
+    sta SPRITE_6_COLOR
+
 	lda #$80; sta SPRITE_0_POINTER
     lda #$81; sta SPRITE_1_POINTER
-              sta SPRITE_7_POINTER
     lda #$82; sta SPRITE_2_POINTER
     lda #$83; sta SPRITE_3_POINTER
     lda #$84; sta SPRITE_4_POINTER
     lda #$85; sta SPRITE_5_POINTER
     lda #$86; sta SPRITE_6_POINTER
-    lda #$6C; sta SPRITE_0_X
-    lda #$7C; sta SPRITE_1_X
-    lda #$8C; sta SPRITE_2_X
-    lda #$9C; sta SPRITE_3_X
-    lda #$AE; sta SPRITE_4_X
-    lda #$BA; sta SPRITE_5_X
-    lda #$CC; sta SPRITE_6_X
-    lda #$DC; sta SPRITE_7_X
-    lda #$48; sta SPRITE_0_Y
-              sta SPRITE_1_Y
-              sta SPRITE_2_Y
-              sta SPRITE_3_Y
-              sta SPRITE_4_Y
-              sta SPRITE_5_Y
-              sta SPRITE_6_Y
-              sta SPRITE_7_Y
+
+    lda #C_CITYXEN_X_POS; sta SPRITE_0_X
+    lda #C_CITYXEN_X_POS+$11; sta SPRITE_1_X
+    lda #C_CITYXEN_X_POS+$22; sta SPRITE_2_X
+    lda #C_CITYXEN_X_POS+$36; sta SPRITE_3_X
+    lda #C_CITYXEN_X_POS+$4a; sta SPRITE_4_X
+    lda #C_CITYXEN_X_POS+$5e; sta SPRITE_5_X
+    lda #C_CITYXEN_X_POS+$72; sta SPRITE_6_X
+
+    lda #C_CITYXEN_Y_POS;
+    sta SPRITE_0_Y
+    sta SPRITE_1_Y
+    sta SPRITE_2_Y
+    sta SPRITE_3_Y
+    sta SPRITE_4_Y
+    sta SPRITE_5_Y
+    sta SPRITE_6_Y
+	
+	ldx #$00
+    stx sin_counter0
+    ldx #$30
+    stx sin_counter1
+    ldx #$50
+    stx sin_counter2
+    ldx #$70
+    stx sin_counter3
+    ldx #$90
+    stx sin_counter4
+    ldx #$b0
+    stx sin_counter5
+    ldx #$d0
+    stx sin_counter6
+    
+	// Setup Squirrel Sprite
+	lda #SPRITE_SQUIRREL_SITTING
+	sta SPRITE_7_POINTER 
+	lda #$00; sta SPRITE_7_X
+	lda #$c0; sta SPRITE_7_Y
+	lda #BROWN
+	sta SPRITE_7_COLOR
+	lda SPRITE_EXPAND_X
+	ora #128
+	sta SPRITE_EXPAND_X
+	lda SPRITE_EXPAND_Y
+	ora #128
+	sta SPRITE_EXPAND_Y
+
 	// TITLE SCREEN LOOP WAITING FOR FIRE BUTTON TO BE PRESSED
 title_loop:
-	lda VIC_RASTER_COUNTER; cmp #$49; bne title_loop // WAIT FOR RASTER $49
-	// CHANGE SPRITE COLORS
-    ldx var_sprite_color_reg
-         stx SPRITE_0_COLOR
-    inx; stx SPRITE_1_COLOR
-    inx; stx SPRITE_2_COLOR
-    inx; stx SPRITE_3_COLOR
-    inx; stx SPRITE_4_COLOR
-    inx; stx SPRITE_5_COLOR
-    inx; stx SPRITE_6_COLOR
-    inx; stx SPRITE_7_COLOR
-    inc var_sprite_color_reg
+
+	jsr sub_title_sin_cityxen
+
+	lda VIC_RASTER_COUNTER; cmp #$02; bcs title_loop
+
+	lda var_squirrely_stop
+	cmp #$01
+	bne squirrely_not_stopped
+	lda #SPRITE_SQUIRREL_SITTING
+	sta SPRITE_7_POINTER
+	lda var_squirrely_stop_timer
+	adc #$01
+	sta var_squirrely_stop_timer
+	bcc title_no_msb
+	lda #$00
+	sta var_squirrely_stop
+	jmp title_no_msb
+
+squirrely_not_stopped:
+	lda SPRITE_7_X
+	cmp #$97
+	bne move_squirrely_continue
+	lda SPRITE_MSB_X
+	and #128
+	cmp #128
+	beq move_squirrely_continue
+	inc var_squirrely_stop
+
+move_squirrely_continue:
+
+	lda var_sprite_7_anim_timer
+	adc #$20
+	sta var_sprite_7_anim_timer
+	bcc over_squirrel_anim_reset
+	
+	lda SPRITE_7_POINTER
+	cmp #SPRITE_SQUIRREL_RUN_2
+	beq reset_squirrel_anim
+	inc SPRITE_7_POINTER
+	jmp over_squirrel_anim_reset
+reset_squirrel_anim:
+	lda #SPRITE_SQUIRREL_RUN_1
+	sta SPRITE_7_POINTER
+over_squirrel_anim_reset:
+
+	clc
+	lda SPRITE_7_X
+	adc #$01
+	sta SPRITE_7_X
+	bcc title_no_msb
+	lda var_sprite_7_msb
+	bne reset_squirrely
+	inc var_sprite_7_msb
+	lda #$00
+	sta SPRITE_7_X
+	lda SPRITE_MSB_X
+	ora #128
+	sta SPRITE_MSB_X
+	jmp title_no_msb
+reset_squirrely:
+	lda #$00
+	sta SPRITE_7_X
+	sta var_sprite_7_msb
+	lda SPRITE_MSB_X
+	and #127
+	sta SPRITE_MSB_X
+title_no_msb:
+	
 	// READ JOYSTICK 2, CHECK FOR FIRE BUTTON PRESS
 	jsr sub_read_joystick_2
 	lda var_joy_2_fire
-	beq title_loop
+	cmp #$1
+	bne not_title_loop
 	rts
+not_title_loop:
+	jmp title_loop
 
-titlemsg1: .text "presents"; .byte 0
-titlemsg2: .text "press fire joyport 2"; .byte 0
+
+sub_title_sin_cityxen:
+
+	lda VIC_RASTER_COUNTER
+	cmp #$E5
+	bcc stscout
+
+    inc sin_counter0
+    inc sin_counter1
+    inc sin_counter2
+    inc sin_counter3
+    inc sin_counter4
+    inc sin_counter5
+    inc sin_counter6
+
+    ldx sin_counter0
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_0_Y
+
+    ldx sin_counter1
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_1_Y
+
+    ldx sin_counter2
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_2_Y
+
+    ldx sin_counter3
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_3_Y
+
+    ldx sin_counter4
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_4_Y
+
+    ldx sin_counter5
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_5_Y
+
+    ldx sin_counter6
+    lda mem_ddlsin,x
+    adc #C_CITYXEN_Y_POS
+    sta SPRITE_6_Y
+stscout:
+	rts
+mem_ddlsin:
+.byte $0d,$0d,$0d,$0d,$0e,$0e,$0e,$0f,$0f,$0f,$0f,$10,$10,$10,$11,$11
+.byte $11,$11,$12,$12,$12,$12,$13,$13,$13,$13,$14,$14,$14,$14,$15,$15
+.byte $15,$15,$15,$16,$16,$16,$16,$16,$17,$17,$17,$17,$17,$17,$17,$17
+.byte $18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18
+.byte $18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18,$18
+.byte $18,$17,$17,$17,$17,$17,$17,$17,$16,$16,$16,$16,$16,$16,$15,$15
+.byte $15,$15,$14,$14,$14,$14,$14,$13,$13,$13,$13,$12,$12,$12,$12,$11
+.byte $11,$11,$10,$10,$10,$10,$0f,$0f,$0f,$0e,$0e,$0e,$0e,$0d,$0d,$0d
+.byte $0c,$0c,$0c,$0b,$0b,$0b,$0b,$0a,$0a,$0a,$09,$09,$09,$09,$08,$08
+.byte $08,$07,$07,$07,$07,$06,$06,$06,$06,$05,$05,$05,$05,$05,$04,$04
+.byte $04,$04,$03,$03,$03,$03,$03,$03,$02,$02,$02,$02,$02,$02,$02,$01
+.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
+.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
+.byte $02,$02,$02,$02,$02,$02,$02,$02,$03,$03,$03,$03,$03,$04,$04,$04
+.byte $04,$04,$05,$05,$05,$05,$06,$06,$06,$06,$07,$07,$07,$07,$08,$08
+.byte $08,$08,$09,$09,$09,$0a,$0a,$0a,$0a,$0b,$0b,$0b,$0c,$0c,$0c,$0c
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: GAME ON
@@ -170,7 +343,7 @@ GAME_ON:
 //////////////////////////////////////////////////////////////////////////////////////
 sub_load_level:
 	lda #$93; jsr KERNAL_CHROUT
-	PrintAtColor(5,5,load_level_message,WHITE)
+	PrintStrAtColor(5,5,"loading level:",WHITE)
 // SET FILENAME
 	ldx #$00
 	lda #$00
@@ -184,28 +357,25 @@ set_filename_loop1:
 	adc #$30
 	sta var_filename
 	PrintAtColor(19,5,var_filename,RED)
-	PrintAtColor(5,7,load_level_filename,WHITE)
+	PrintStrAtColor(5,7,"filename:",WHITE)
 	PrintAtColor(14,7,var_filename,RED)
 	DDL_Load_MemName(var_filename,$50,$00)
 	PrintAtRainbow(5,9,level_message) // show the loaded level message
 	// READ JOYSTICK 2, CHECK FOR FIRE BUTTON PRESS
-	PrintAtColor(5,11,load_level_press_fire,YELLOW)
+	PrintStrAtColor(5,11,"press fire to start",YELLOW)
 load_level_temp_check_fire:
 	jsr sub_read_joystick_2
 	lda var_joy_2_fire
 	beq load_level_temp_check_fire
 	rts
-load_level_message:   .text "loading level:"; .byte 0
-load_level_filename:  .text "filename:"; .byte 0
-load_level_press_fire: .text "press fire to start"; .byte 0
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Move Player
 //////////////////////////////////////////////////////////////////////////////////////
 sub_move_player:
-	lda #$01;
-	cmp VIC_RASTER_COUNTER;
-	bcs ok_move;
+	lda #$01
+	cmp VIC_RASTER_COUNTER
+	bcs ok_move
 	rts
 ok_move:
 	lda var_joy_2_x
@@ -229,22 +399,22 @@ up:
 	dec var_player_y
 check_boundry:
 	lda var_player_x
-	cmp #$ff
+	cmp var_fm_x_max
 	bne ckbnx2
 	dec var_player_x
 	jmp ckbny
 ckbnx2:
-	cmp #$20
+	cmp var_fm_x_min
 	bne ckbny
 	inc var_player_x
 ckbny:
 	lda var_player_y
-	cmp #$d0
+	cmp var_fm_y_max
 	bne ckbny2
 	dec var_player_y
 	jmp xitckbn
 ckbny2:
-	cmp #$40
+	cmp var_fm_y_min
 	bne xitckbn
 	inc var_player_y
 xitckbn:
@@ -263,23 +433,16 @@ sub_update_hud:
 	beq do_hud
 	rts
 do_hud:
-	PrintAtColor(30,0,SCREEN_LIVES_STRING,WHITE)
-	PrintAtColor(37,0,var_lives,WHITE)
+	PrintStrAtColor(30,0,"lives:",WHITE)
+	PrintDecAtColor(37,0,var_lives,WHITE)
 
 	// DEBUG STUFF
-	PrintDecAtColor(30,2,var_player_x,WHITE)
-	PrintDecAtColor(30,3,var_player_y,WHITE)
-	PrintDecAtColor(30,4,var_joy_2_fire,WHITE)
-	
-	// lda var_player_x; sta 1104
-	// lda var_player_y; sta 1105
-	// lda var_joy_2_fire; sta 1106
-
-
+	PrintStrAtColor(30,21,"debuginfo:",RED)
+	PrintDecAtColor(30,22,var_player_x,WHITE)
+	PrintDecAtColor(30,23,var_player_y,WHITE)
+	PrintDecAtColor(30,24,var_joy_2_fire,WHITE)
 
     rts	
-
-SCREEN_LIVES_STRING: .text "lives:"; .byte 0
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Copy Florida Man FONT into VIC mem
@@ -320,8 +483,7 @@ copyloopz2:
 //////////////////////////////////////////////////////////////////////////////////////
 // Subroutine: Copy Florida Man Sprites into VIC mem
 //////////////////////////////////////////////////////////////////////////////////////
-sub_copy_floridaman_sprites:
-	// copy the floridaman sprites to the showing area from $A1C0-$B7C1 to $2000 
+sub_copy_floridaman_sprites: // copy the floridaman sprites to the showing area from $A1C0-$B7C1 to $2000 
 	ldx #$00
 copy_flm_loopz1:
 	lda mem_floridaman_sprites,x; sta $2000,x
