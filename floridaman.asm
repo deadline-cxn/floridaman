@@ -28,7 +28,7 @@
 .file [name="prg_files/0.prg", segments="DefaultLevel"]
 .file [name="prg_files/1.prg", segments="Level1"]
 .file [name="prg_files/2.prg", segments="Level2"]
-.disk [filename="floridaman.d64", name="FLORIDAMAN", id="2019!" ] {
+.disk [filename="floridaman.d64", name="FLORIDAMAN", id="2020!" ] {
 	[name="FLORIDAMAN", type="prg",  segments="Main,DDL,DefaultLevel"],
 	[name="----------------", type="rel"],
 	[name="0", type="prg", segments="DefaultLevel"],
